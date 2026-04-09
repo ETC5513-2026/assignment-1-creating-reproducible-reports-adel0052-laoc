@@ -11,6 +11,7 @@ format:
 number-sections: true
 toc: true
 embed-resources: true
+lightbox: true
 execute:
     echo: false
     output: false
@@ -45,7 +46,9 @@ The secondary question we will also be looking to answer is:
 
 *Did customer response to higher marketing spend vary across market segments?*
 
-# Dataset Introduction
+# The Data
+
+## Dataset Introduction
 
 ```{r import and cleaning}
 customer_data_raw <- read_csv("data/36749346_Alex Delamer.csv")
@@ -76,34 +79,87 @@ Our cleaned dataset has the following characteristics:
     - Each observation represents a single customer
 
 
-Using our cleaned dataset, we can take our first look at any differences in market segments. As seen in @fig-spending-by-segment below, the average purchase size for each segment doesn't see much variance. Our biggest spenders actually come from the small-medium business sector rather than enterprise as might be expected. 
+Using our cleaned dataset, we can take our first look at any differences in market segments. As seen in @fig-purchase-spend-box-1 below, the average purchase size for each segment doesn't see much variance. Our biggest spenders actually come from the small-medium business sector rather than enterprise as might be expected. 
 
-```{r #fig-spending-by-segment}
-#| fig-cap: Last quarters purchases, with customers divided by market segment
-#| output: true
-
+```{r creating boxplots}
 customer_data_clean$segment <- factor(customer_data_clean$segment, levels = c("Consumer", "SMB", "Enterprise"))
 
-ggplot(customer_data_clean, aes(x = segment, y = purchase_amount, fill = segment)) +
+purchasing_by_segment <- ggplot(customer_data_clean, aes(x = segment, y = purchase_amount, fill = segment)) +
     geom_boxplot(box.linewidth = 1, whisker.linewidth = 1) +
+    ylim(0, 350) +
     theme(legend.position = "none", panel.background = element_blank(), axis.line = element_line(linewidth = 0.5, colour = "black"), plot.title = element_text(size = 20, hjust = 0.5), plot.background = element_rect(fill = "gray75"), panel.grid = element_blank()) +
     scale_fill_brewer(palette = "Dark2") +
-    labs(title = "Purchases by Market Segment", x = "Market Segment", y = "Purchase Amount (AUD)")
+    labs(x = "Market Segment", y = "Purchase Amount (AUD)")
+
+spend_by_segment <- ggplot(customer_data_clean, aes(x = segment, y = marketing_spend, fill = segment)) +
+    geom_boxplot(box.linewidth = 1, whisker.linewidth = 1) +
+    ylim(0, 350) +
+    theme(legend.position = "none", panel.background = element_blank(), axis.line = element_line(linewidth = 0.5, colour = "black"), plot.title = element_text(size = 20, hjust = 0.5), plot.background = element_rect(fill = "gray75"), panel.grid = element_blank()) +
+    scale_fill_brewer(palette = "Dark2") +
+    labs(x = "Market Segment", y = "Marketing Spend (AUD)")
 ```
 
-Enterprise also has the lowest mean purchase amount, as seen in @tbl-mean-spending-by-segment.
-
-```{r #tbl-mean-spending-by-segment}
-#| tbl-cap: Mean spending per Market Segment
+```{r drawing boxplots}
 #| output: true
+#| label: fig-purchase-spend-box
+#| fig-cap: "Purchase Amounts and Marketing Spend in AUD by Market Segment"
+#| layout-ncol: 2
+#| fig-subcap: 
+#|   - "Purchases"
+#|   - "Marketing Spend"
 
-mean_segment_spend <- customer_data_clean |>
+plot(purchasing_by_segment)
+plot(spend_by_segment)
+```
+
+Enterprise also has the lowest mean purchase amount, as seen in @tbl-mean-purchases-by-segment. In what seems like some devastating news for both the marketing team and the business as a whole, we have a higher mean marketing spend than mean purchase amount in every market segment!
+
+```{r #tbl-mean-purchases-by-segment}
+#| output: true
+#| tbl-cap: Mean purchase amount and market spend per market segment
+
+mean_segment_purchases <- customer_data_clean |>
     mutate(Segment = segment) |>
     group_by(Segment) |> 
-    summarise(`Mean Purchase (Aud)` = round(mean(purchase_amount), 2))
+    summarise(`Mean Purchase (AUD)` = round(mean(purchase_amount), 2), `Mean Marketing Spend (AUD)` = round(mean(marketing_spend), 2))
 
-kable(mean_segment_spend) |>
-    kable_styling(bootstrap_options = "hover")
+kable(mean_segment_purchases) |>
+    kable_styling(bootstrap_options = c("hover", "bordered"))
 ```
 
 # Results
+
+While we have just learned that the business is doomed due to marketing spending more to acquire every customer than we make from them (our bad on that one), we should at least still answer our initial question: **did all this marketing spending at least encourage our customers to buy more?**
+
+In a word: *yes!!*
+
+```{r #fig-spend-vs-purchases}
+#| output: true
+#| fig-cap: Marketing Spend vs Purchase amount per customer, separated by market segment
+
+ggplot(customer_data_clean, aes(x = marketing_spend, y = purchase_amount, colour = segment)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    theme(legend.position = "none", panel.background = element_blank(), axis.line = element_line(linewidth = 0.5, colour = "black"), plot.title = element_text(size = 20, hjust = 0.5), plot.background = element_rect(fill = "gray75"), panel.grid = element_blank()) +
+    facet_wrap(vars(segment), axes = "all") +
+    labs(x = "Market Spend (AUD)", y = "Purchase Amount (AUD)") +
+    scale_color_brewer(palette = "Dark2")
+```
+
+```{r}
+overall_model <- lm(purchase_amount ~ marketing_spend, data = customer_data_clean)
+consumer_model <- lm(purchase_amount ~ marketing_spend, data = customer_data_clean, subset = (segment == "Consumer"))
+smb_model <- lm(purchase_amount ~ marketing_spend, data = customer_data_clean, subset = (segment == "SMB"))
+enterprise_model <- lm(purchase_amount ~ marketing_spend, data = customer_data_clean, subset = (segment == "Enterprise"))
+```
+
+As seen in @fig-spend-vs-purchases, when we spend more money marketing to a customer the amount of money they spend with us tends to increase as well. Assuming that turning a profit is not a priority (or indeed, something we need to do at all), continuing to spend larger and larger amounts on personalised marketing should see us continue to pump our gross revenue numbers higher and higher!
+
+We have also been able to answer our secondary question; this trend seems to hold across all three of our market segments. 
+
+## Caveats
+
+```{r}
+r_squared_summary_table <- 
+```
+`r round(summary(overall_model)$r.squared, 4)`
