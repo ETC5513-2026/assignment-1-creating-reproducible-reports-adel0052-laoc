@@ -6,14 +6,64 @@ format:
         theme:
             light: darkly
             dark: flatly
-execute: 
+    pdf: 
+        theme: default
+number-sections: true
+toc: true
+embed-resources: true
+execute:
+    echo: false
+    output: false
     message: false
     warning: false
 ---
 
 ::: {.callout-tip .dark-content}
-# This assignment also comes in light mode! ↗️
+This assignment also comes in light mode (when rendered to HTML)! ↗️
+
+For information on why this tip is still visible when rendered to PDF, see [this forum discussion](https://github.com/quarto-dev/quarto-cli/issues/2140).
 ::: 
 
+```{r setup}
+library(tidyverse)
+```
 
+# Introduction
 
+Having spent the last quarter running a personalised marketing campaign, we in the marketing department are now looking to justify that spending. Using marketing spend per customer and their subsequent purchase amount, we will be able to determine if a higher amount spent on advertising to a unique customer leads to that customer spending more money with our business. If we can find a positive correlation between marketing spend and purchase amount on a per customer basis, we should consider a continuation of this personalised marketing program in future as the most effective way of parting our customers from their money. 
+
+Given that we service customers from the consumer to enterprise level, we will also examine if spending pattern response to personalised marketing spend changes by market segment, in the hope of finding the most effective ways to part our largest customers from their largest money.
+
+# Research Question
+
+Our mandated research question can be put simply:
+
+*Did higher marketing spend per customer lead to higher purchase amounts?*
+
+The secondary question we will also be looking to answer is:
+
+*Did customer response to higher marketing spend vary across market segments?*
+
+# Dataset Introduction
+
+```{r import and cleaning}
+customer_data_raw <- read_csv("data/36749346_Alex Delamer.csv")
+
+customer_data_clean <- customer_data_raw |> 
+    select(marketing_spend, purchase_amount, segment) |>
+    filter_out(is.na(purchase_amount))
+```
+
+We have collected the following data on our customers from the last quarter:
+1. The customer ID we assigned to them
+1. Their original signup date to our site
+1. The marketing spend on this customer during the last quarter in AUD
+1. The number of visits they made to the site last quarter
+1. The amount the spent on our site after the last quarter in AUD
+1. What market segment the customer belongs to
+
+We will be using only points 3, 5 and 6 in our analysis to look for correlations between marketing spend and purchase amounts across market segments during the last quarter.
+
+# Dataset Description
+
+# Results
