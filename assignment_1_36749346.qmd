@@ -159,7 +159,12 @@ We have also been able to answer our secondary question; this trend seems to hol
 
 ## Caveats
 
-```{r}
-r_squared_summary_table <- 
+```{r squared table}
+#| output: true
+
+r_squared_summary_table <- data.frame("Market Segment" = c("All Segments", "Consumer", "SMB", "Enterprise"), "R-Squared Value" = c(round(summary(overall_model)$r.squared, 4), round(summary(consumer_model)$r.squared, 4), round(summary(smb_model)$r.squared, 4), round(summary(overall_model)$r.squared, 4)), check.names = FALSE)
+
+kable(r_squared_summary_table)
 ```
+
 `r round(summary(overall_model)$r.squared, 4)`
