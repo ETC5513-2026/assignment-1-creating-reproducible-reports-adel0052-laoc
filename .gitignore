@@ -5,3 +5,7 @@
 .DS_Store
 *.Rproj
 .comments/
+*.html
+*.css
+*.js
+*.woff

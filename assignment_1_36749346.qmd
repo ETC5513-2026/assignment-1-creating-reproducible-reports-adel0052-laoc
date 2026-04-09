@@ -1,0 +1,19 @@
+---
+title: "ETC5513 Assignment 1"
+author: "Alex Delamer"
+format: 
+    html:
+        theme:
+            light: darkly
+            dark: flatly
+execute: 
+    message: false
+    warning: false
+---
+
+::: {.callout-tip .dark-content}
+# This assignment also comes in light mode! ↗️
+::: 
+
+
+
