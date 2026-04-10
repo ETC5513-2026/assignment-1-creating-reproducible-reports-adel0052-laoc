@@ -1,0 +1,6 @@
+---
+title: "Appendix"
+format: html
+---
+
+I did not use AI in working on this assignment. I did use the the Quarto documentation site, Stack Overflow, blog posts on R code, and the inbuilt help function in R.
