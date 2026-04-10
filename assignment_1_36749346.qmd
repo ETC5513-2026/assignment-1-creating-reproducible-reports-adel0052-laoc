@@ -191,7 +191,8 @@ As we can see in @tbl-r-squared-values, the linear models that are represented b
 
 r_squared_summary_table <- data.frame("Market Segment" = c("All Segments", "Consumer", "SMB", "Enterprise"), "R-Squared Value" = c(round(summary(overall_model)$r.squared, 4), round(summary(consumer_model)$r.squared, 4), round(summary(smb_model)$r.squared, 4), round(summary(overall_model)$r.squared, 4)), check.names = FALSE)
 
-kable(r_squared_summary_table)
+kable(r_squared_summary_table) |> 
+    kable_styling(bootstrap_options = c("hover", "bordered"))
 ```
 
 It seems possible that this correlation between marketing spend and purchase amount is an artifact of additional factors not recorded in the dataset. Consider the following:
