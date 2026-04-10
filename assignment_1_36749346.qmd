@@ -153,7 +153,7 @@ kable(mean_segment_purchases) |>
 
 # Results
 
-While we have just learned that the business is doomed due to marketing spending more to acquire every customer than we make from them (our bad on that one), we should at least still answer our initial question: **did all this marketing spending at least encourage our customers to buy more?**
+While we have just learned that the business is doomed due to the marketing department spending more to acquire every customer than we make from them (our bad on that one), we should at least still answer our initial question: **did all this marketing spending at least encourage our customers to buy more?**
 
 In a word: *yes!!*
 
@@ -183,7 +183,7 @@ smb_model <- lm(purchase_amount ~ marketing_spend, data = customer_data_clean, s
 enterprise_model <- lm(purchase_amount ~ marketing_spend, data = customer_data_clean, subset = (segment == "Enterprise"))
 ```
 
-As we can see in @tbl-r-squared-values, the linear models that are represented by the fitted lines in @fig-spend-vs-purchases are good but not perfect predictors of customer purchasing behaviour. When all segments are considered together, marketing spend accounts for `r round(summary(overall_model)$r.squared, 4) * 100`% of the variance in customer purchasing habits. However, in the consumer segment where we have the highest number of customers, our model only accounts for `r round(summary(consumer_model)$r.squared, 4) * 100`% of variance. 
+As we can see in @tbl-r-squared-values, the linear models that are represented by the fitted lines in @fig-spend-vs-purchases are good but not perfect predictors of customer purchasing behaviour. When all segments are considered together, marketing spend accounts for `r round(summary(overall_model)$r.squared, 4) * 100`% of the variance in customer purchasing habits. However, in the consumer segment where we have the highest number of customers, our model only accounts for `r round(summary(consumer_model)$r.squared, 4) * 100`% of variance. For the enterprise segment in particular where we only have `r filter(mean_segment_purchases, Segment == "Enterprise")$"Number of Customers"` customers, it's hard to say if the correlation we currently see would hold with a larger population. 
 
 ```{r tbl-r-squared-values}
 #| output: true
@@ -200,3 +200,5 @@ It seems possible that this correlation between marketing spend and purchase amo
 - Did we spend more on personalised advertising to customers who had previously spent a lot of money with us and were likely to do so again even without the increased marketing push?
 - Were these purchases even affected by marketing spend? We didn't record if a customer made their purchases this quarter before or after we spent the money to advertise to them.
 - Did the type of personalised advertising a customer received affect the size of their purchase? We used ads, emails and coupons but didn't record which of those and in what quantities a given customer received.
+
+As a final note, I would like to direct you towards our biggest spenders in the SMB market segment. As we approach the top end of the middle graph in @fig-spend-vs-purchases, purchase amount appears to rise *dramatically* relative to marketing spend. Entering next quarter, as we fight to save this company and our jobs, it seems wise to consider: what if purchase amount is *exponential* in relation to marketing spend for small-medium businesses? What if we can save the whole company by spending the entire marketing budget on personalised ads for a single customer in the SMB segment, and retire by the end of the calendar year? This bold strategy has one major advantage: it's not what we did last quarter.
