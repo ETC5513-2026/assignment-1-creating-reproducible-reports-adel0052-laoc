@@ -1,6 +1,7 @@
 ---
 title: "ETC5513 Assignment 1"
 author: "Alex Delamer"
+date: 2026/04/10
 format: 
     html:
         theme:
@@ -19,7 +20,21 @@ execute:
     warning: false
 ---
 
-::: {.callout-tip .dark-content}
+:::{.content-hidden}
+All of the graphs in this report have a gray background so they aren't particularly jarring in either light or dark mode when rendered to HTML. This also means they don't look particularly nice in either mode either.
+
+I tried to find a way to display a different plot depending on whether you're in light or dark mode; while this is pretty easy to do by just applying the .light-content and .dark-content classes to two code chunks, doing it this way completely breaks figure numbering and cross-referencing depending on which mode you're in. 
+
+Any additional methods I might have tried seemed to involve messing directly with Javascript. See:
+
+- https://github.com/orgs/quarto-dev/discussions/5439
+- https://mickael.canouil.fr/posts/2023-05-30-quarto-light-dark/
+
+This is scary and I didn't want to do it, but I still wanted to have both dark and light mode, so the graphs are gray.
+:::
+
+
+::: {.callout-tip .dark-content .content-hidden unless-format="html"}
 This assignment also comes in light mode (when rendered to HTML)! ↗️
 
 For information on why this tip is still visible when rendered to PDF, see [this forum discussion](https://github.com/quarto-dev/quarto-cli/issues/2140).
@@ -168,7 +183,9 @@ smb_model <- lm(purchase_amount ~ marketing_spend, data = customer_data_clean, s
 enterprise_model <- lm(purchase_amount ~ marketing_spend, data = customer_data_clean, subset = (segment == "Enterprise"))
 ```
 
-```{r tbl-squared-table}
+As we can see in @tbl-r-squared-values, the linear models that are represented by the fitted lines in @fig-spend-vs-purchases are good but not perfect predictors of customer purchasing behaviour. When all segments are considered together, marketing spend accounts for `r round(summary(overall_model)$r.squared, 4) * 100`% of the variance in customer purchasing habits. However, in the consumer segment where we have the highest number of customers, our model only accounts for `r round(summary(consumer_model)$r.squared, 4) * 100`% of variance. 
+
+```{r tbl-r-squared-values}
 #| output: true
 #| tbl-cap: R-Squared values for linear models of purchase amount with marketing spend as predictor
 
@@ -177,4 +194,8 @@ r_squared_summary_table <- data.frame("Market Segment" = c("All Segments", "Cons
 kable(r_squared_summary_table)
 ```
 
-`r round(summary(overall_model)$r.squared, 4)`
+It seems possible that this correlation between marketing spend and purchase amount is an artifact of additional factors not recorded in the dataset. Consider the following:
+
+- Did we spend more on personalised advertising to customers who had previously spent a lot of money with us and were likely to do so again even without the increased marketing push?
+- Were these purchases even affected by marketing spend? We didn't record if a customer made their purchases this quarter before or after we spent the money to advertise to them.
+- Did the type of personalised advertising a customer received affect the size of their purchase? We used ads, emails and coupons but didn't record which of those and in what quantities a given customer received.
